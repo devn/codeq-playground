@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+cd deps/datomic-free-0.8.3619
+bin/rest 8080 free datomic:free://localhost:4334/

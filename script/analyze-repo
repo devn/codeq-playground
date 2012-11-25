@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+base_path=$(pwd)
+
+if [ $# -ne 2 ]; then
+  echo "USAGE: ./script/analyze-repo PATH_TO_CLOJURE_REPO_TO_ANALYZE DB_NAME"
+else
+  cd $1
+  java -server -Xmx1g -jar $base_path/deps/codeq/target/codeq-0.1.0-SNAPSHOT-standalone.jar datomic:free://localhost:4334/$2
+fi

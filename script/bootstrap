@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+mkdir -p deps
+cd deps
+
+# Datomic
+datomic_release_url="http://downloads.datomic.com/0.8.3619/datomic-free-0.8.3619.zip"
+echo "=> Fetching Datomic Free from $datomic_release_url..."
+curl -O -s $datomic_release_url
+unzip $(basename $datomic_release_url .zip)
+rm $(basename $datomic_release_url)
+
+# Codeq
+echo "=> Fetching codeq from GitHub.."
+git clone https://github.com/Datomic/codeq.git
+cd codeq
+echo "=> Building codeq jar..."
+lein uberjar
