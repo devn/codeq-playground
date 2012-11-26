@@ -9,35 +9,6 @@
 (def conn (d/connect uri))
 (def db (d/db conn))
 
-(def
-  ^{:doc "http://blog.datomic.com/2012/10/codeq.html"}
-  rules
-  '[[(node-files ?n ?f) [?n :node/object ?f] [?f :git/type :blob]]
-    [(node-files ?n ?f) [?n :node/object ?t] [?t :git/type :tree]
-     [?t :tree/nodes ?n2] (node-files ?n2 ?f)]
-    [(object-nodes ?o ?n) [?n :node/object ?o]]
-    [(object-nodes ?o ?n) [?n2 :node/object ?o] [?t :tree/nodes ?n2] (object-nodes ?t ?n)]
-    [(commit-files ?c ?f) [?c :commit/tree ?root] (node-files ?root ?f)]
-    [(commit-codeqs ?c ?cq) (commit-files ?c ?f) [?cq :codeq/file ?f]]
-    [(file-commits ?f ?c) (object-nodes ?f ?n) [?c :commit/tree ?n]]
-    [(codeq-commits ?cq ?c) [?cq :codeq/file ?f] (file-commits ?f ?c)]])
-
-(defn find-commits-for-fn
-  "Usage: (find-commits-for-fn \"clojure.core/pmap\")"
-  [fq-fn]
-  (d/q '[:find ?src (min ?date)
-         :in $ % ?name
-         :where
-         [?n :code/name ?name]
-         [?cq :clj/def ?n]
-         [?cq :codeq/code ?cs]
-         [?cs :code/text ?src]
-         [?cq :codeq/file ?f]
-         (file-commits ?f ?c)
-         (?c :commit/authoredAt ?date)]
-       db rules fq-fn))
-;; (find-commits-for-fn "clojure.core/map")
-
 (defn get-committers []
   (d/q '[:find ?email
          :where
@@ -89,7 +60,34 @@
        db email))
 ;; (first-and-latest-commit-by-author-email "chouser@n01se.net")
 
-;; Find insts when a codeq was changed
+(def
+  ^{:doc "http://blog.datomic.com/2012/10/codeq.html"}
+  rules
+  '[[(node-files ?n ?f) [?n :node/object ?f] [?f :git/type :blob]]
+    [(node-files ?n ?f) [?n :node/object ?t] [?t :git/type :tree]
+     [?t :tree/nodes ?n2] (node-files ?n2 ?f)]
+    [(object-nodes ?o ?n) [?n :node/object ?o]]
+    [(object-nodes ?o ?n) [?n2 :node/object ?o] [?t :tree/nodes ?n2] (object-nodes ?t ?n)]
+    [(commit-files ?c ?f) [?c :commit/tree ?root] (node-files ?root ?f)]
+    [(commit-codeqs ?c ?cq) (commit-files ?c ?f) [?cq :codeq/file ?f]]
+    [(file-commits ?f ?c) (object-nodes ?f ?n) [?c :commit/tree ?n]]
+    [(codeq-commits ?cq ?c) [?cq :codeq/file ?f] (file-commits ?f ?c)]])
+
+(defn find-commits-for-fn
+  [fq-fn]
+  (d/q '[:find ?src (min ?date)
+         :in $ % ?name
+         :where
+         [?n :code/name ?name]
+         [?cq :clj/def ?n]
+         [?cq :codeq/code ?cs]
+         [?cs :code/text ?src]
+         [?cq :codeq/file ?f]
+         (file-commits ?f ?c)
+         (?c :commit/authoredAt ?date)]
+       db rules fq-fn))
+;; (find-commits-for-fn "clojure.core/map")
+
 (defn commit-dates [name]
   (map first
        (d/q '[:find (min ?date) ?sha
@@ -104,7 +102,6 @@
             db rules name)))
 ;; (commit-dates "clojure.core/pmap")
 
-;; Match insts to committer names
 (defn committer-by-insts [insts]
   (d/q '[:find ?email
          :in $ [?inst ...]
@@ -115,25 +112,6 @@
        db
        insts))
 ;; (-> "clojure.core/pmap" commit-dates committer-by-insts)
-
-
-;; The following blows the heap:
-;; (->> (d/q '[:find ?name (count ?date)
-;;             :in [[?name ?date ?sha]]]
-;;           (d/q '[:find ?name (min ?date) ?sha
-;;                  :in $ %
-;;                  :where
-;;                  [?n :code/name ?name]
-;;                  [?cq :clj/def ?n]
-;;                  [?cq :codeq/code ?c]
-;;                  [?c :code/sha ?sha]
-;;                  (codeq-commits ?cq ?commit)
-;;                  [?commit :commit/committedAt ?date]]
-;;                db
-;;                rules))
-;;      (sort-by second)
-;;      reverse
-;;      (take 5))
 
 (comment
   ;; Delete your DB
