@@ -3,6 +3,10 @@ h1. Codeq Playground
 A quick and easy way to play around with queries against your clojure
 git repositories.
 
+h2. Requirements
+
+* "Leiningen 2.0+":https://github.com/technomancy/leiningen
+
 h2. Get Started
 
 * @git clone http://github.com/devn/codeq-playground.git@
