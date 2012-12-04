@@ -113,7 +113,12 @@
        insts))
 ;; (-> "clojure.core/pmap" commit-dates committer-by-insts)
 
+(defn get-authors-for-codeq [name]
+  (-> name commit-dates commit-by-insts))
+;; (get-authors-for-codeq "clojure.core/pmap")
+
 (comment
   ;; Delete your DB
+  (def db-name "clojure")
   (d/delete-database (str "datomic:free://localhost:4334/" db-name))
 )
