@@ -3,6 +3,10 @@ h1. Codeq Playground
 A quick and easy way to play around with queries against your clojure
 git repositories.
 
+h2. Requirements
+
+* "Leiningen 2.0+":https://github.com/technomancy/leiningen
+
 h2. Get Started
 
 * @git clone http://github.com/devn/codeq-playground.git@
@@ -10,6 +14,19 @@ h2. Get Started
 * @script/bootstrap@
 * @script/start-datomic@ to start up Datomic
 * @script/analyze-repo my/clojure/repo-name datomic-db-name@
+
+h2. Examples
+
+"codeq-playground":https://github.com/devn/codeq-playground includes a few examples of what you can do with Codeq.
+They're stolen liberally from the Codeq "blog post":http://blog.datomic.com/2012/10/codeq.html and from Rich Hickey's
+unsession talk on Codeq at "Clojure/conj 2012":http://clojure-conj.org/
+
+Once you've run `script/analyze-repo` on a Clojure git repository, jump in and try
+out some of the examples in `core.clj`.
+
+h2. Contributing
+
+Send me your ideas in the form of a pull request. That is all.
 
 h2. License
 
