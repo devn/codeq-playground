@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 mkdir -p deps
 cd deps
