@@ -3,6 +3,6 @@
   :url "http://github.com/devn/codeq-playground"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[com.datomic/datomic-free "0.8.3546"]
+  :dependencies [[com.datomic/datomic-free "0.8.3664"]
                  [org.clojure/clojure "1.5.0-alpha6"]]
   :jvm-opts ["-Xmx2g"])
