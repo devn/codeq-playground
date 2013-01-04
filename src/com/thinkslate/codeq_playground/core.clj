@@ -114,7 +114,7 @@
 ;; (-> "clojure.core/pmap" commit-dates committer-by-insts)
 
 (defn get-authors-for-codeq [name]
-  (-> name commit-dates commit-by-insts))
+  (-> name commit-dates committer-by-insts))
 ;; (get-authors-for-codeq "clojure.core/pmap")
 
 (comment
